@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="station_br">
+        <item>南港展覽館</item>
+        <item>南港軟體園區</item>
+        <item>東湖</item>
+
+    </array>
+
+</resources>

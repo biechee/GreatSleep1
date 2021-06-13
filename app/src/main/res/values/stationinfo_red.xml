@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="station_red">
+        <item>淡水</item>
+        <item>紅樹林</item>
+        <item>竹圍</item>
+
+    </array>
+</resources>

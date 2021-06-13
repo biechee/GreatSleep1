@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="station_bl">
+        <item>頂埔</item>
+        <item>永寧</item>
+        <item>土城</item>
+
+    </array>
+
+
+</resources>

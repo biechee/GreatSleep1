@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "353633433836",
+    "project_id": "greatsleep-3d895",
+    "storage_bucket": "greatsleep-3d895.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353633433836:android:c670391c41ea06121a8dc9",
+        "android_client_info": {
+          "package_name": "com.example.greatsleep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353633433836-hnbckpvteqnsrq88e9d6q3lpeh6s1m8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwqQnuufUEUko-Kd_DA5q58IrbSF3z19Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353633433836-hnbckpvteqnsrq88e9d6q3lpeh6s1m8e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

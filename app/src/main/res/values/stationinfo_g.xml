@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="station_green">
+        <item>新店</item>
+        <item>新店區公所</item>
+        <item>七張</item>
+
+
+    </array>
+
+</resources>
