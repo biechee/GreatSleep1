@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //FB:WCduEgfoGEaqC76pOI+oviOlT/U=
+        //FB  KEY:WCduEgfoGEaqC76pOI+oviOlT/U=
         //FB
         callbackManager = CallbackManager.Factory.create();
         mAuthFB=FirebaseAuth.getInstance();
