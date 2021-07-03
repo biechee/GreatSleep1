@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -27,7 +26,7 @@ public class StationAlarm extends AppCompatActivity {
         //彈出對話框
         AlertDialog.Builder ab = new AlertDialog.Builder(StationAlarm.this);
         ab.setTitle("起床了!!");
-        ab.setMessage("快到站囉~~~")
+        ab.setMessage("時間到囉")
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

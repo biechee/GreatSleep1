@@ -15,6 +15,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -23,15 +26,17 @@ import java.util.Calendar;
 
 public class Station extends AppCompatActivity {
     //初始宣告
-    Spinner startlines[]=new Spinner[6];
-    Spinner endlines[]=new Spinner[6];
-    ArrayAdapter<CharSequence> Stationline;
-    ArrayAdapter<CharSequence> BL;
-    ArrayAdapter<CharSequence> BR;
-    ArrayAdapter<CharSequence> Red;
-    ArrayAdapter<CharSequence> Gre;
-    ArrayAdapter<CharSequence> Org;
-    ArrayAdapter<CharSequence> Yel;
+    private Spinner startlines;
+    private Spinner endlines;
+    private String startStation;
+    private String endStation;
+    private ArrayAdapter<CharSequence> Stationline;
+    private ArrayAdapter<CharSequence> BL;
+    private ArrayAdapter<CharSequence> BR;
+    private ArrayAdapter<CharSequence> Red;
+    private ArrayAdapter<CharSequence> Gre;
+    private ArrayAdapter<CharSequence> Org;
+    private ArrayAdapter<CharSequence> Yel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +49,17 @@ public class Station extends AppCompatActivity {
         imageView.setMaxScale(0.8f);
         imageView.setMinScale(0.2f);
         imageView.bringToFront();
+
+        startStation="頂埔";
+        endStation="頂埔";
         //捷運站選擇
         StationChoose();
 
     }
     private void StationChoose() {
-
         //0:藍線 1:棕線 2:紅線 3:綠線 4:橘線 5:黃線
-        for(int i=0;i<startlines.length;i++)
-            startlines[i]=(Spinner)findViewById(R.id.start_station);
-        for(int i=0;i<endlines.length;i++)
-            endlines[i]=(Spinner)findViewById(R.id.end_station);
+        startlines=(Spinner)findViewById(R.id.start_station);
+        endlines=(Spinner)findViewById(R.id.end_station);
         Stationline=ArrayAdapter.createFromResource(this,R.array.start_station, android.R.layout.simple_spinner_item);
         BL=ArrayAdapter.createFromResource(this,R.array.station_bl, android.R.layout.simple_spinner_item);
         BR=ArrayAdapter.createFromResource(this,R.array.station_br, android.R.layout.simple_spinner_item);
@@ -72,53 +77,63 @@ public class Station extends AppCompatActivity {
         Yel.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
 
         //Adapter更改Spinner內容
-        startlines[0].setAdapter(BL);
-        endlines[0].setAdapter(BL);
-
+        stationSelect(BL);
     }
     //按下藍線
     public void blue(View view) {
-        startlines[0].setAdapter(BL);
-
-        startlines[0].setOnItemSelectedListener(
+        stationSelect(BL);
+    }
+    //按下棕線
+    public void brown(View view) {
+        stationSelect(BR);
+    }
+    //按下紅線
+    public void red(View view) {
+        stationSelect(Red);
+    }
+    //按下綠線
+    public void green(View view) {
+        stationSelect(Gre);
+    }
+    //按下橘線
+    public void orange(View view) {
+        stationSelect(Org);
+    }
+    //按下黃線
+    public void yellow(View view) {
+        stationSelect(Yel);
+    }
+    public void stationSelect(SpinnerAdapter line){
+        startlines.setAdapter(line);
+        startlines.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String text=startlines[0].getSelectedItem().toString();
+                        startStation=startlines.getSelectedItem().toString();
 
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
+                        startStation=startlines.getSelectedItem().toString();
 
                     }
                 });
-        endlines[0].setAdapter(BL);
+        endlines.setAdapter(line);
+        endlines.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        endStation=startlines.getSelectedItem().toString();
+
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        endStation=startlines.getSelectedItem().toString();
+
+                    }
+                });
     }
-    //按下棕線
-    public void brown(View view) {
-        startlines[1].setAdapter(BR);
-        endlines[1].setAdapter(BR);
-    }
-    //按下紅線
-    public void red(View view) {
-        startlines[2].setAdapter(Red);
-        endlines[2].setAdapter(Red);
-    }
-    //按下綠線
-    public void green(View view) {
-        startlines[3].setAdapter(Gre);
-        endlines[3].setAdapter(Gre);
-    }
-    //按下橘線
-    public void orange(View view) {
-        startlines[4].setAdapter(Org);
-        endlines[4].setAdapter(Org);
-    }
-    //按下黃線
-    public void yellow(View view) {
-        startlines[5].setAdapter(Yel);
-        endlines[5].setAdapter(Yel);
-    }
+
     //按下確認
     public void confirm(View view) {
         new AlertDialog.Builder(this)
@@ -131,7 +146,7 @@ public class Station extends AppCompatActivity {
                         PendingIntent pendingIntentSet;
                         Intent intent = new Intent(Station.this, StationAlarm.class);
                         //設定響鈴時可以在主頁進行
-                        intent.addCategory ( Intent . CATEGORY_DEFAULT );
+                        intent.addCategory (Intent.CATEGORY_DEFAULT );
                         intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK );
 
                         //時間設定
@@ -156,4 +171,5 @@ public class Station extends AppCompatActivity {
                 .setNegativeButton("取消",null)
                 .show();
     }
+
 }

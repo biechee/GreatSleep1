@@ -2,13 +2,72 @@ package com.example.greatsleep;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class Clock extends AppCompatActivity {
-
+    int hour;
+    int minutes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
+
+        TimePicker timePicker=(TimePicker)findViewById(R.id.timerpick);
+        timePicker.setIs24HourView(true);
+        timePicker.setClickable(false);
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                hour=hourOfDay;
+                minutes=minute;
+
+            }
+        });
+    }
+
+    public void clockConfirm(View view) {
+        PendingIntent pendingIntentSet;
+        Intent intent = new Intent(Clock.this, ClockAlarm.class);
+        //設定響鈴時可以在主頁進行
+        intent.addCategory (Intent.CATEGORY_DEFAULT );
+        intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK );
+
+        //時間設定
+        AlarmManager alarm= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar =Calendar.getInstance();
+        int currentHour=calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute=calendar.get(Calendar.MINUTE);
+        calendar.set(Calendar.HOUR_OF_DAY,hour);
+        calendar.set(Calendar.MINUTE,minutes);
+        calendar.set(Calendar.SECOND,0);
+        if (currentHour>hour){//如果選擇的時間小於獲取的系統時間日期加一
+            calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
+        }
+        if (currentHour==hour){
+            if (currentMinute>minutes) {
+                calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
+            }
+        }
+        int currentDate=calendar.get(Calendar.DATE);
+        currentHour=calendar.get(Calendar.HOUR_OF_DAY);
+        currentMinute=calendar.get(Calendar.MINUTE);
+        long triggerAtMillis= calendar.getTimeInMillis();
+        pendingIntentSet=PendingIntent.getActivity(Clock.this,0,intent,0);
+        alarm.set(AlarmManager.RTC_WAKEUP,triggerAtMillis,pendingIntentSet);
+        Toast.makeText(Clock.this,"您选择的时间是："+currentDate+"日"+currentHour+"時"+currentMinute+"分",Toast.LENGTH_SHORT).show();
+        //按下確定回到主頁
+        Intent intent2 = new Intent(Clock.this, MainActivity.class);
+        startActivity(intent2);
+
     }
 }

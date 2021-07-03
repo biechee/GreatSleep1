@@ -1,61 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbarStyle="insideInset"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:fillViewport="false"
     tools:context=".Clock">
+
     <LinearLayout
-        android:layout_height="200px"
         android:layout_width="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/title"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TimePicker
+            android:id="@+id/timerpick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:text="   鬧鐘\n設定遊戲"
+            android:timePickerMode="spinner"
             />
 
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
-        <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
-        <ImageButton
-            android:id="@+id/imageButton4"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="確認"
+            android:onClick="clockConfirm"
+            />
+
+
+
     </LinearLayout>
 
-</ScrollView>
+
+</LinearLayout>
