@@ -10,8 +10,10 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.WindowManager;
 import android.media.MediaPlayer;
+import android.widget.Toast;
 
 public class ClockAlarm extends AppCompatActivity {
     SharedPreferences preferences;
@@ -77,6 +79,6 @@ public class ClockAlarm extends AppCompatActivity {
         }
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
-
     }
+
 }

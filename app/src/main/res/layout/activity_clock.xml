@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="是否震動"
+            android:background="@color/com_facebook_blue"
             android:textSize="24sp" />
 
         <Button
@@ -47,8 +48,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="確認"
+                android:textSize="24sp"
                 android:layout_alignParentBottom="true"
-                android:paddingHorizontal="50dp"
+                android:paddingHorizontal="100dp"
                 android:onClick="clockConfirm"
                 />
 

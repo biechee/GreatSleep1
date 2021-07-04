@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -22,7 +23,8 @@ public class Clock extends AppCompatActivity {
     int minutes;
     Switch vibrate;
     Button sound;
-
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +33,10 @@ public class Clock extends AppCompatActivity {
         vibrate=(Switch)findViewById(R.id.switch1);
         sound=(Button)findViewById(R.id.soundSet);
         TimePicker timePicker=(TimePicker)findViewById(R.id.timerpick);
-        SharedPreferences preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = preferences.edit();
+        preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
+        editor = preferences.edit();
 
+        vibrate.setChecked(preferences.getBoolean("vibration",true));
         timePicker.setIs24HourView(true);
         timePicker.setClickable(false);
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
@@ -41,19 +44,6 @@ public class Clock extends AppCompatActivity {
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 hour=hourOfDay;
                 minutes=minute;
-            }
-        });
-        vibrate.setChecked(preferences.getBoolean("vibration",true));
-        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //是否震動
-                if(isChecked==true){
-                    editor.putBoolean("vibration",true);
-                }
-                else{
-                    editor.putBoolean("vibration",false);
-                }
             }
         });
 
@@ -76,25 +66,26 @@ public class Clock extends AppCompatActivity {
         //時間設定
         AlarmManager alarm= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Calendar calendar =Calendar.getInstance();
-        int currentHour=calendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute=calendar.get(Calendar.MINUTE);
+
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minutes);
         calendar.set(Calendar.SECOND,0);
-        if (currentHour>hour){//如果選擇的時間小於獲取的系統時間日期加一
-            calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
+        if (Calendar.HOUR_OF_DAY>hour){//如果選擇的時間小於獲取的系統時間日期加一
+            calendar.set(Calendar.DAY_OF_YEAR,calendar.get(Calendar.DAY_OF_YEAR) + 1);
         }
-        if (currentHour==hour){
-            if (currentMinute>=minutes) {
+        if (Calendar.HOUR_OF_DAY==hour){
+            if (Calendar.MINUTE>=minutes) {
                 calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
             }
         }
         int currentDate=calendar.get(Calendar.DATE);
-        currentHour=calendar.get(Calendar.HOUR_OF_DAY);
-        currentMinute=calendar.get(Calendar.MINUTE);
+        int currentHour=calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute=calendar.get(Calendar.MINUTE);
+
         long triggerAtMillis= calendar.getTimeInMillis();
         pendingIntentSet=PendingIntent.getActivity(Clock.this,0,intent,0);
         alarm.set(AlarmManager.RTC_WAKEUP,triggerAtMillis,pendingIntentSet);
+
         Toast.makeText(Clock.this,"您选择的时间是："+currentDate+"日"+currentHour+"時"+currentMinute+"分",Toast.LENGTH_SHORT).show();
         //按下確定回到主頁
         Intent intent2 = new Intent(Clock.this, MainActivity.class);
@@ -104,9 +95,16 @@ public class Clock extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        vibrate.setChecked(preferences.getBoolean("vibration",true));
+        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //是否震動
+                editor.putBoolean("vibration",isChecked);
+                editor.apply();
+            }
+        });
         //更改按鈕文字
-        SharedPreferences preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
         sound.setText("鈴聲   "+preferences.getString("text","鈴聲一"));
-
     }
 }
