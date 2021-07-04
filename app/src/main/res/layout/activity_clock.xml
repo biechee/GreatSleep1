@@ -9,9 +9,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="1">
+        >
+
         <TimePicker
             android:id="@+id/timerpick"
             android:layout_width="wrap_content"
@@ -20,14 +21,38 @@
             android:timePickerMode="spinner"
             />
 
-        <Button
+        <Switch
+            android:id="@+id/switch1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="確認"
-            android:onClick="clockConfirm"
+            android:text="是否震動"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/soundSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textSize="24sp"
             />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="確認"
+                android:layout_alignParentBottom="true"
+                android:paddingHorizontal="50dp"
+                android:onClick="clockConfirm"
+                />
 
+        </RelativeLayout>
 
     </LinearLayout>
 

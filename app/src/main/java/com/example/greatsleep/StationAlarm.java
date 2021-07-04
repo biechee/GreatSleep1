@@ -54,7 +54,4 @@ public class StationAlarm extends AppCompatActivity {
         v=(Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
         v.vibrate(new long[]{1000,1000, 1000,1000},0);
     }
-    public void cc(View view) {
-        v.cancel();
-    }
 }

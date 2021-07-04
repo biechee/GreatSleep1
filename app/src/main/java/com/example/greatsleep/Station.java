@@ -49,9 +49,6 @@ public class Station extends AppCompatActivity {
         imageView.setMaxScale(0.8f);
         imageView.setMinScale(0.2f);
         imageView.bringToFront();
-
-        startStation="頂埔";
-        endStation="頂埔";
         //捷運站選擇
         StationChoose();
 
@@ -123,12 +120,12 @@ public class Station extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        endStation=startlines.getSelectedItem().toString();
+                        endStation=endlines.getSelectedItem().toString();
 
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
-                        endStation=startlines.getSelectedItem().toString();
+                        endStation=endlines.getSelectedItem().toString();
 
                     }
                 });
@@ -170,6 +167,7 @@ public class Station extends AppCompatActivity {
                 })
                 .setNegativeButton("取消",null)
                 .show();
+
     }
 
 }

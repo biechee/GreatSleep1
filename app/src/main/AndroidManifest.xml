@@ -15,10 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Greatsleep">
-        <activity android:name=".ClockAlarm"
+        <activity android:name=".ClockSound"></activity>
+        <activity
+            android:name=".ClockAlarm"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.TranslucentTheme"
-            ></activity>
+            android:theme="@style/AppTheme.TranslucentTheme" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".LoginActivity" />
         <activity

@@ -6,23 +6,34 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
-
+import android.media.MediaPlayer;
 public class Clock extends AppCompatActivity {
     int hour;
     int minutes;
+    Switch vibrate;
+    Button sound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
 
+        vibrate=(Switch)findViewById(R.id.switch1);
+        sound=(Button)findViewById(R.id.soundSet);
         TimePicker timePicker=(TimePicker)findViewById(R.id.timerpick);
+        SharedPreferences preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = preferences.edit();
+
         timePicker.setIs24HourView(true);
         timePicker.setClickable(false);
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
@@ -30,7 +41,28 @@ public class Clock extends AppCompatActivity {
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 hour=hourOfDay;
                 minutes=minute;
+            }
+        });
+        vibrate.setChecked(preferences.getBoolean("vibration",true));
+        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //是否震動
+                if(isChecked==true){
+                    editor.putBoolean("vibration",true);
+                }
+                else{
+                    editor.putBoolean("vibration",false);
+                }
+            }
+        });
 
+        //前往更改鬧鐘鈴聲頁面
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Clock.this,ClockSound.class);
+                startActivity(intent);
             }
         });
     }
@@ -41,7 +73,6 @@ public class Clock extends AppCompatActivity {
         //設定響鈴時可以在主頁進行
         intent.addCategory (Intent.CATEGORY_DEFAULT );
         intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK );
-
         //時間設定
         AlarmManager alarm= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Calendar calendar =Calendar.getInstance();
@@ -54,7 +85,7 @@ public class Clock extends AppCompatActivity {
             calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
         }
         if (currentHour==hour){
-            if (currentMinute>minutes) {
+            if (currentMinute>=minutes) {
                 calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
             }
         }
@@ -68,6 +99,14 @@ public class Clock extends AppCompatActivity {
         //按下確定回到主頁
         Intent intent2 = new Intent(Clock.this, MainActivity.class);
         startActivity(intent2);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //更改按鈕文字
+        SharedPreferences preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
+        sound.setText("鈴聲   "+preferences.getString("text","鈴聲一"));
 
     }
 }
