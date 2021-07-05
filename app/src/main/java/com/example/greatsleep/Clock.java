@@ -66,18 +66,18 @@ public class Clock extends AppCompatActivity {
         //時間設定
         AlarmManager alarm= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Calendar calendar =Calendar.getInstance();
-
+        if (calendar.get(Calendar.HOUR_OF_DAY)>hour){//如果選擇的時間小於獲取的系統時間日期
+            calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
+        }
+        if (calendar.get(Calendar.HOUR_OF_DAY)==hour){
+            if (Calendar.MINUTE>=minutes) {
+                calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
+            }
+        }
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minutes);
         calendar.set(Calendar.SECOND,0);
-        if (Calendar.HOUR_OF_DAY>hour){//如果選擇的時間小於獲取的系統時間日期加一
-            calendar.set(Calendar.DAY_OF_YEAR,calendar.get(Calendar.DAY_OF_YEAR) + 1);
-        }
-        if (Calendar.HOUR_OF_DAY==hour){
-            if (Calendar.MINUTE>=minutes) {
-                calendar.set(Calendar. DAY_OF_YEAR, calendar.get(Calendar. DAY_OF_YEAR) + 1);
-            }
-        }
+
         int currentDate=calendar.get(Calendar.DATE);
         int currentHour=calendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute=calendar.get(Calendar.MINUTE);
