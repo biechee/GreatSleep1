@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.KeyguardManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
@@ -13,10 +15,14 @@ import android.view.WindowManager;
 
 public class StationAlarm extends AppCompatActivity {
     Vibrator v;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_station_alarm);
+        preferences = getSharedPreferences("station", Context.MODE_PRIVATE);
+        editor = preferences.edit();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         //突破鎖屏代碼
@@ -32,6 +38,10 @@ public class StationAlarm extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //你可以在這裡加入事件
                         v.cancel();
+                        editor.putBoolean("is_alarm",false);
+                        editor.putBoolean("cancel_station_alarm",false);
+                        editor.putString("name",null);
+                        editor.apply();
                         StationAlarm.this.finish();
                     }
                 });
@@ -40,6 +50,10 @@ public class StationAlarm extends AppCompatActivity {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 v.cancel();
+                editor.putBoolean("is_alarm",false);
+                editor.putBoolean("cancel_station_alarm",false);
+                editor.putString("name",null);
+                editor.apply();
                 StationAlarm.this.finish();
             }
         });

@@ -20,7 +20,7 @@ public class ClockSound extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock_sound);
 
-        SharedPreferences preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("clock", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
 
         mRadioButton0 = (RadioButton) findViewById(R.id.mRadioButton0);

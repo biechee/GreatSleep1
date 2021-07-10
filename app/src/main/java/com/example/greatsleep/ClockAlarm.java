@@ -19,6 +19,7 @@ public class ClockAlarm extends AppCompatActivity {
     SharedPreferences preferences;
     private MediaPlayer mediaPlayer;
     private Vibrator v;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,8 @@ public class ClockAlarm extends AppCompatActivity {
         v = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
 
         //取得鈴聲設定
-        preferences = getSharedPreferences("alarm_tune", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("clock", Context.MODE_PRIVATE);
+        editor = preferences.edit();
         mediaPlayer=MediaPlayer.create(this,preferences.getInt("tune",0));
 
         //突破鎖屏代碼
@@ -43,6 +45,10 @@ public class ClockAlarm extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //你可以在這裡加入事件
+                        editor.putBoolean("is_alarm",false);
+                        editor.putBoolean("cancel_clock_alarm",false);
+                        editor.apply();
+
                         v.cancel();
                         mediaPlayer.stop();
                         mediaPlayer.release();
@@ -50,11 +56,14 @@ public class ClockAlarm extends AppCompatActivity {
                         ClockAlarm.this.finish();
                     }
                 });
-
         //點選對話框外動作
         ab.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
+                editor.putBoolean("is_alarm",false);
+                editor.putBoolean("cancel_clock_alarm",false);
+                editor.apply();
+
                 v.cancel();
                 mediaPlayer.stop();
                 mediaPlayer.release();
@@ -65,7 +74,6 @@ public class ClockAlarm extends AppCompatActivity {
         AlertDialog ad = ab.create();
         ad.show();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
