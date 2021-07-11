@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Greatsleep">
-        <activity android:name=".ClockSound"></activity>
+        <activity android:name=".DiaryNew"></activity>
+        <activity android:name=".DiaryMenu" />
+        <activity android:name=".ClockSound" />
         <activity
             android:name=".ClockAlarm"
             android:launchMode="singleInstance"

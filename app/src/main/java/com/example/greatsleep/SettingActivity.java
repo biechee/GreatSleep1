@@ -24,7 +24,6 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-
         firebaseAuth=FirebaseAuth.getInstance();
         checkUser();
         google_logout=(Button)findViewById(R.id.logout);

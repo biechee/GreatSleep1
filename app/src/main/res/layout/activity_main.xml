@@ -43,11 +43,20 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:text="夢的解析&amp;日記"
+            android:text="夢的解析"
             android:onClick="dream_btn"
             />
         <Button
             android:id="@+id/a5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="日記"
+            android:onClick="diary_btn"
+            />
+        <Button
+            android:id="@+id/a6"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

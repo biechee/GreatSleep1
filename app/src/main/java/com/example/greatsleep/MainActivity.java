@@ -99,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
         Intent Intent = new Intent(MainActivity.this, Dream.class);
         startActivity(Intent);
     }
+    public void diary_btn(View view) {
+        Intent Intent = new Intent(MainActivity.this, DiaryMenu.class);
+        startActivity(Intent);
+    }
+
     public void setting_btn(View view) {
         Intent Intent = new Intent(MainActivity.this, SettingActivity.class);
         startActivity(Intent);
@@ -136,4 +141,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 }

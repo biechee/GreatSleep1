@@ -47,7 +47,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-
 public class LoginActivity extends AppCompatActivity {
     //Google
     GoogleSignInClient mGoogleSignInClient;
@@ -94,8 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
-
-
 
         //Google
         GoogleSignInOptions gso = new GoogleSignInOptions
