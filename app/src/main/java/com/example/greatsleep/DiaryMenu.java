@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -32,8 +33,10 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
         setContentView(R.layout.activity_diary_menu);
 
         DiaryMenu.context = getApplicationContext();
+
         addbutton = (Button) findViewById(R.id.add_button);
         recyclerView = (RecyclerView)findViewById(R.id.diary_list);
+
         try{
             diaryAdapter = new DiaryAdapter(
                     DiaryMenu.getAppContext(),
@@ -43,6 +46,7 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
         {
             showError("", e.getMessage(), this);
         }
+
         diaryAdapter.setClickListener(this);
         addbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,8 +88,10 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
                 {
                     try
                     {
+                        String title=data.getStringExtra("title");
                         String text = data.getStringExtra("text");
-                        diaryAdapter.addData(new Diary(text));
+                        diaryAdapter.addData(new Diary(text,title));
+                        Log.v("diary",title+"  3  "+text );
                     }
                     catch(Exception e)
                     {
@@ -94,12 +100,14 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
                 }
                 else if(mode == IntentOption.EDIT)
                 {
+                    String title=data.getStringExtra("title");
                     String text = data.getStringExtra("text");
                     String id = data.getStringExtra("id");
 
                     try
                     {
-                        diaryAdapter.editData(new Diary(text, id));
+                        diaryAdapter.editData(new Diary(text, id, title));
+                        Log.v("diary",title+"  4");
                     }
                     catch(Exception e)
                     {
@@ -108,12 +116,14 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
                 }
                 else if(mode == IntentOption.DELETE)
                 {
+                    String title=data.getStringExtra("title");
                     String text = data.getStringExtra("text");
                     String id = data.getStringExtra("id");
 
                     try
                     {
-                        diaryAdapter.removeData(new Diary(text, id));
+                        diaryAdapter.removeData(new Diary(text, id,title));
+                        Log.v("diary",title+"  5");
                     }
                     catch(Exception e)
                     {
@@ -148,6 +158,7 @@ public class DiaryMenu extends AppCompatActivity implements RecycleItemOnClickLi
         Diary data = diaryAdapter.getData(position);
 
         Intent intent = new Intent(DiaryMenu.this, DiaryNew.class);
+        intent.putExtra("title",data.getTitle());
         intent.putExtra("text", data.getText());
         intent.putExtra("id", data.getId());
         intent.putExtra("MODE", IntentOption.EDIT);

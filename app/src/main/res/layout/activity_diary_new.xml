@@ -4,35 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".DiaryNew">
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:text="儲存日記"
-            android:textColor="#ffffffff"
-            android:textSize="18sp"></Button>
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
         <EditText
-            android:id="@+id/diary_edit"
+            android:id="@+id/diary_title"
             android:layout_width="match_parent"
-            android:layout_height="653dp"
-            android:layout_above="@+id/save_button"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:singleLine="false"
-            android:typeface="normal"
+            android:layout_height="match_parent"
+            android:singleLine="true"
             android:visibility="visible"></EditText>
+    </LinearLayout>
 
-    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp"
+                android:gravity="center"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:text="儲存日記"
+                android:textColor="#ffffffff"
+                android:textSize="18sp"></Button>
+            <EditText
+                android:id="@+id/diary_edit"
+                android:layout_width="match_parent"
+                android:layout_height="653dp"
+                android:layout_above="@+id/save_button"
+                android:gravity="top"
+                android:paddingTop="30dp"
+                android:inputType="textMultiLine"
+                android:singleLine="false"
+                android:typeface="normal"
+                android:visibility="visible"></EditText>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 </LinearLayout>

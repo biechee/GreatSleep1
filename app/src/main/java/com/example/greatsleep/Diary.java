@@ -7,83 +7,93 @@ import java.util.Random;
 
 public class Diary {
 
-        private String text;
-        private String id;
-        private static final int MAX_TITLE_LENGHT = 25;
+    private String title;
+    private String text;
+    private String id;
+    private static final int MAX_TITLE_LENGHT = 25;
 
 
-    public Diary(String text, String id)
-        {
-            this.text = text;
-            this.id = id;
-        }
+    public Diary(String text, String id,String title)
+    {
+        this.text = text;
+        this.id = id;
+        this.title=title;
+    }
 
 
-    public Diary(String text)
-        {
-            this.text = text;
-            this.id = genId();
-        }
+    public Diary(String text,String title)
+    {
+        this.text = text;
+        this.id = genId();
+        this.title=title;
+    }
 
 
-        public String getText()
-        {
-            return text;
-        }
+    public String getText()
+    {
+        return text;
+    }
 
 
-        public String getId()
-        {
-            return id;
-        }
+    public String getId()
+    {
+        return id;
+    }
 
 
-        public String getText(int end)
-        {
-            return getText(0, end);
-        }
+    public String getTitle(int end)
+    {
+        return getTitle(0, end);
+    }
 
 
-        public String getText(int start, int end)
-        {
-            if(text.length() < end)
-                return text;
+    public String getTitle(int start, int end)
+    {
+        if(title.length() < end)
+            return title;
 
-            return text.substring(start, end);
-        }
+        return title.substring(start, end);
+    }
 
+    public String getTitle() {
+        return title;
+    }
 
-        public void setText(String text)
-        {
-            this.text = text;
-        }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-
-        public String getDate()
-        {
-            int pos = id.indexOf('#');
-            return id.substring(0, pos);
-        }
-
-
-        @Override
-        public String toString()
-        {
-            return getText(MAX_TITLE_LENGHT);
-        }
+    public void setText(String text)
+    {
+        this.text = text;
+    }
 
 
-        private String genId()
-        {
-            Random rand = new Random();
-            int num = rand.nextInt(10001);
+    public String getDate()
+    {
+        int pos = id.indexOf('#');
+        return id.substring(0, pos);
+    }
 
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-            Date date = new Date();
 
-            String atrb = dateFormat.format(date) + "#" + num;
+    @Override
+    public String toString()
+    {
+        return getTitle(MAX_TITLE_LENGHT);
+    }
 
-            return atrb;
-        }
+
+    private String genId()
+    {
+        Random rand = new Random();
+        int num = rand.nextInt(10001);
+
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        Date date = new Date();
+
+        String atrb = dateFormat.format(date) + "#" + num;
+
+        return atrb;
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.example.greatsleep;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -90,7 +91,7 @@ public class DiaryDB implements DiaryDB_I
      * @throws Exception Contains message for user.
      */
     @Override
-    public void addData(com.example.greatsleep.Diary data) throws Exception
+    public void addData(Diary data) throws Exception
     {
         try
         {
@@ -103,8 +104,14 @@ public class DiaryDB implements DiaryDB_I
             Element record = doc.createElement("record");
 
             record.setAttributeNode(attr);
+
             Element text = (Element)record.appendChild(doc.createElement("text"));
             text.appendChild(doc.createTextNode(data.getText()));
+
+            Element title = (Element)record.appendChild(doc.createElement("title"));
+            Log.v("diary",title+"   "+text);
+
+            title.appendChild(doc.createTextNode(data.getTitle()));
 
             rootElement.appendChild(record);
 
@@ -122,7 +129,7 @@ public class DiaryDB implements DiaryDB_I
      * @throws Exception Contains message for user.
      */
     @Override
-    public void removeData(com.example.greatsleep.Diary data) throws Exception
+    public void removeData(Diary data) throws Exception
     {
         Document doc = getXMLDoc();
         Element rootElement = doc.getDocumentElement();
@@ -154,7 +161,7 @@ public class DiaryDB implements DiaryDB_I
      * @throws Exception Contains message for user.
      */
     @Override
-    public void editData(com.example.greatsleep.Diary data) throws Exception
+    public void editData(Diary data) throws Exception
     {
         removeData(data);
         addData(data);
@@ -166,9 +173,9 @@ public class DiaryDB implements DiaryDB_I
      * @throws Exception Contains message for user.
      */
     @Override
-    public ArrayList<com.example.greatsleep.Diary> getContent() throws Exception
+    public ArrayList<Diary> getContent() throws Exception
     {
-        ArrayList<com.example.greatsleep.Diary> it = new ArrayList<com.example.greatsleep.Diary>();
+        ArrayList<Diary> it = new ArrayList<Diary>();
 
         Document doc = getXMLDoc();
 
@@ -180,8 +187,10 @@ public class DiaryDB implements DiaryDB_I
             {
                 Element element = (Element) node;
                 String date = element.getAttribute("date");
+                String title= element.getElementsByTagName("title").item(0).getTextContent();
+                Log.v("diary",title+"  1");
                 String text = element.getElementsByTagName("text").item(0).getTextContent();
-                it.add(new com.example.greatsleep.Diary(text, date));
+                it.add(new Diary(text, date,title));
             }
             else
             {

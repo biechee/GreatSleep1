@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +20,9 @@ import java.util.ArrayList;
 
 public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
 {
-    private ArrayList<com.example.greatsleep.Diary> mDataset;//ArrayList of stored user data
+    private ArrayList<Diary> mDataset;//ArrayList of stored user data
     private RecyclerView list;
-    private com.example.greatsleep.RecycleItemOnClickListener clickListener;
+    private RecycleItemOnClickListener clickListener;
     private DiaryDB_I db;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
@@ -35,7 +36,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
             super(v);
 
             SharedPreferences shr = PreferenceManager.getDefaultSharedPreferences(DiaryMenu.getAppContext());
-            float titleSize = Float.parseFloat(shr.getString("title_text", "34"));
+            float titleSize = Float.parseFloat(shr.getString("title_text", "24"));
             float dateSize = Float.parseFloat(shr.getString("date_text", "14"));
             boolean isCentered = shr.getString("gravity_text", "CENTER").equals("CENTER");
 
@@ -94,7 +95,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
         list.setAdapter(this);
         list.setHasFixedSize(true);
 
-        db = new com.example.greatsleep.DiaryDB(context);
+        db = new DiaryDB(context);
         mDataset = db.getContent();
     }
 
@@ -103,7 +104,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * @param data
      * @throws Exception
      */
-    public void editData(com.example.greatsleep.Diary data) throws Exception
+    public void editData(Diary data) throws Exception
     {
         this.removeData(data);
         this.addData(data);
@@ -133,17 +134,18 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        holder.title.setText(mDataset.get(position).toString().replace("\n", " "));
+        holder.title.setText(mDataset.get(position).toString());
+        Log.v("diary",mDataset.get(position).toString()+"  22");
         holder.date.setText(mDataset.get(position).getDate());
 
         //Sets different color for odd and even rows
         if(position % 2 == 0)
         {
-            holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+            holder.itemView.setBackgroundColor(Color.parseColor("#345798"));
         }
         else
         {
-            holder.itemView.setBackgroundColor(Color.parseColor("#eaeaea"));
+            holder.itemView.setBackgroundColor(Color.parseColor("#15233D"));
         }
     }
 
@@ -162,7 +164,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * @param data
      * @throws Exception
      */
-    public void addData(com.example.greatsleep.Diary data) throws Exception
+    public void addData(Diary data) throws Exception
     {
         db.addData(data);//Adds new data into file
         mDataset.add(data);//Adds data into database
@@ -173,7 +175,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * Sets click listener for RecycleItem
      * @param clickListener
      */
-    public void setClickListener(com.example.greatsleep.RecycleItemOnClickListener clickListener)
+    public void setClickListener(RecycleItemOnClickListener clickListener)
     {
         this.clickListener = clickListener;
     }
@@ -183,7 +185,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * @param data
      * @throws Exception
      */
-    public void removeData(com.example.greatsleep.Diary data) throws Exception
+    public void removeData(Diary data) throws Exception
     {
         int pos = getPos(data);
         if(pos < 0)
@@ -200,7 +202,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * @param pos positon of data
      * @return
      */
-    public com.example.greatsleep.Diary getData(int pos)
+    public Diary getData(int pos)
     {
         return mDataset.get(pos);
     }
@@ -210,7 +212,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder>
      * @param data
      * @return
      */
-    private int getPos(com.example.greatsleep.Diary data)
+    private int getPos(Diary data)
     {
         for(int i = 0; i < mDataset.size(); i++)
         {

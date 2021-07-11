@@ -222,12 +222,12 @@ public class Station extends AppCompatActivity {
                             int s=calendar.get(Calendar.SECOND);
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
                             calendar.set(Calendar.MINUTE, minute);
-                            calendar.set(Calendar.SECOND, s+5);
+                            calendar.set(Calendar.SECOND, s+totalt);
                             //計算剩餘時間
                             int left_minute = totalt/60;
                             String left_time = "將於" + left_minute + "分鐘後提醒您";
 
-                            Toast.makeText(Station.this, left_time + "  " + totalt, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Station.this, left_time +"" , Toast.LENGTH_SHORT).show();
                             long triggerAtMillis = calendar.getTimeInMillis();
 
                             alarm.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentSet);
