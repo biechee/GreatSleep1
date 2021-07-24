@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         //FB  KEY:WCduEgfoGEaqC76pOI+oviOlT/U=
         //FB
         callbackManager = CallbackManager.Factory.create();
@@ -71,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager=CallbackManager.Factory.create();
 
         FBloginButton=(Button)findViewById(R.id.button2);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            FBloginButton.setStateListAnimator(null);
+        }
         FBloginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +112,10 @@ public class LoginActivity extends AppCompatActivity {
         checkUser();
 
         google_login=(Button)findViewById(R.id.button);
+        //按鈕置頂
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            google_login.setStateListAnimator(null);
+        }
         google_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +172,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         //Facebook
         callbackManager.onActivityResult(requestCode,resultCode,data);
+
     }
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);

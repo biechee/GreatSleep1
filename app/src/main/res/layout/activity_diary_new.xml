@@ -5,17 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".DiaryNew">
+    tools:context=".Diaries.DiaryNew">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            />
         <EditText
             android:id="@+id/diary_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:singleLine="true"
+            android:hint="請輸入標題"
+            android:paddingLeft="20dp"
             android:visibility="visible"></EditText>
     </LinearLayout>
 
@@ -38,7 +50,8 @@
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
                 android:text="儲存日記"
-                android:textColor="#ffffffff"
+                android:background="@drawable/searchbutton"
+                android:textStyle="bold"
                 android:textSize="18sp"></Button>
             <EditText
                 android:id="@+id/diary_edit"
@@ -47,12 +60,11 @@
                 android:layout_above="@+id/save_button"
                 android:gravity="top"
                 android:paddingTop="30dp"
+                android:paddingLeft="20dp"
                 android:inputType="textMultiLine"
                 android:singleLine="false"
                 android:typeface="normal"
-                android:visibility="visible"></EditText>
-
+                android:hint="請輸入您的日記內容"></EditText>
         </RelativeLayout>
-
     </LinearLayout>
 </LinearLayout>

@@ -1,42 +1,49 @@
 package com.example.greatsleep;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.Toast;
 
+import com.example.greatsleep.Clock.ClockFragment;
+import com.example.greatsleep.Diaries.DiaryMenuFragment;
+import com.example.greatsleep.Dreams.DreamFragment;
+import com.example.greatsleep.Station.StationFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Calendar;
-
-import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
+    private FragmentManager fmgr;
+    private SleepFragment sleepFragment;
+    private StationFragment stationFragment;
+    private ClockFragment clockFragment;
+    private DreamFragment dreamFragment;
+    private DiaryMenuFragment diaryMenuFragment;
     SharedPreferences station_preferences;
     SharedPreferences.Editor station_editor;
-
     SharedPreferences clock_preferences;
     SharedPreferences.Editor clock_editor;
-    Button station;
+    BottomNavigationView bottomNavigationView;
+    private int change;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //到站提示儲存
         station_preferences = getSharedPreferences("station", Context.MODE_PRIVATE);
         station_editor = station_preferences.edit();
@@ -44,70 +51,79 @@ public class MainActivity extends AppCompatActivity {
         clock_preferences=getSharedPreferences("clock", Context.MODE_PRIVATE);
         clock_editor=clock_preferences.edit();
 
-        station=(Button)findViewById(R.id.a2);
+        fmgr=getSupportFragmentManager();
+        sleepFragment=new SleepFragment();
+        stationFragment=new StationFragment();
+        clockFragment=new ClockFragment();
+        dreamFragment=new DreamFragment();
+        diaryMenuFragment=new DiaryMenuFragment();
 
+        //設定初始介面
+        FragmentTransaction transaction=fmgr.beginTransaction();
+        transaction.add(R.id.container1,sleepFragment);
+        transaction.commit();
+
+        change =R.id.action_sleep;
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item){
+                //換介面
+                switch(item.getItemId()){
+                    case R.id.action_sleep:
+                        FragmentTransaction transaction=fmgr.beginTransaction();
+                        transaction.setCustomAnimations(R.animator.slide_left_in,R.animator.slide_right_out);
+                        transaction.replace(R.id.container1,sleepFragment);
+                        change =R.id.action_sleep;
+                        transaction.commit();
+                        break;
+                    case R.id.action_station:
+                        transaction=fmgr.beginTransaction();
+                        if(change ==R.id.action_sleep)
+                            transaction.setCustomAnimations(R.animator.slide_right_in,R.animator.slide_left_out);
+                        else
+                            transaction.setCustomAnimations(R.animator.slide_left_in,R.animator.slide_right_out);
+                        transaction.replace(R.id.container1,stationFragment);
+                        change =R.id.action_station;
+                        transaction.commit();
+                        break;
+                    case R.id.action_clock:
+                        transaction=fmgr.beginTransaction();
+                        if(change ==R.id.action_sleep || change ==R.id.action_station)
+                            transaction.setCustomAnimations(R.animator.slide_right_in,R.animator.slide_left_out);
+                        else
+                            transaction.setCustomAnimations(R.animator.slide_left_in,R.animator.slide_right_out);
+                        transaction.replace(R.id.container1,clockFragment);
+                        change =R.id.action_clock;
+                        transaction.commit();
+                        break;
+                    case R.id.action_dream:
+                        transaction=fmgr.beginTransaction();
+                        if(change ==R.id.action_diary)
+                            transaction.setCustomAnimations(R.animator.slide_left_in,R.animator.slide_right_out);
+                        else
+                            transaction.setCustomAnimations(R.animator.slide_right_in,R.animator.slide_left_out);
+                        transaction.replace(R.id.container1,dreamFragment);
+                        change =R.id.action_dream;
+                        transaction.commit();
+                        break;
+                    case R.id.action_diary:
+                        transaction=fmgr.beginTransaction();
+                        transaction.setCustomAnimations(R.animator.slide_right_in,R.animator.slide_left_out);
+                        transaction.replace(R.id.container1,diaryMenuFragment);
+                        change=R.id.action_diary;
+                        transaction.commit();
+                        break;
+                }
+                return true;
+            }
+        });
         firebaseAuth=FirebaseAuth.getInstance();
         checkUser();
     }
-    public void analyse_btn(View view) {
-        Intent Intent = new Intent(MainActivity.this, Sleep.class);
-        startActivity(Intent);
-    }
-    public void station_btn(View view) {
-        //有到站提示true
-        if(station_preferences.getBoolean("cancel_station_alarm",false)){
-            new AlertDialog.Builder(this)
-                    .setTitle("到站提示尚未提醒，確定取消嗎?")
-                    .setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //你可以在這裡加入事件
-                            station_editor.putBoolean("cancel_station_alarm",false);
-                            station_editor.putString("name",null);
-                            station_editor.apply();
-                            Intent Intent = new Intent(MainActivity.this, Station.class);
-                            startActivity(Intent);
-                        }
-                    }).setNegativeButton("取消",null).show();
-        }
-        else{
-            Intent Intent = new Intent(MainActivity.this, Station.class);
-            startActivity(Intent);
-        }
-    }
-    public void clock_btn(View view) {
-        if(clock_preferences.getBoolean("cancel_clock_alarm",false)){
-            new AlertDialog.Builder(this)
-                    .setTitle("鬧鐘尚未提醒，確定取消嗎?")
-                    .setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //你可以在這裡加入事件
-                            clock_editor.putBoolean("cancel_clock_alarm",false);
-                            clock_editor.apply();
-                            Intent Intent = new Intent(MainActivity.this, Clock.class);
-                            startActivity(Intent);
-                        }
-                    }).setNegativeButton("取消",null).show();
-        }
-        else{
-            Intent Intent = new Intent(MainActivity.this, Clock.class);
-            startActivity(Intent);
-        }
-    }
-    public void dream_btn(View view) {
-        Intent Intent = new Intent(MainActivity.this, Dream.class);
-        startActivity(Intent);
-    }
-    public void diary_btn(View view) {
-        Intent Intent = new Intent(MainActivity.this, DiaryMenu.class);
-        startActivity(Intent);
-    }
 
-    public void setting_btn(View view) {
-        Intent Intent = new Intent(MainActivity.this, SettingActivity.class);
-        startActivity(Intent);
-    }
     private void checkUser() {
         FirebaseUser user=firebaseAuth.getCurrentUser();
         if(user==null){
@@ -121,11 +137,11 @@ public class MainActivity extends AppCompatActivity {
             String email=user.getEmail();
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         checkUser();
-        station.setText(station_preferences.getString("name","到站提示"));
     }
 
     //返回鍵當作home鍵
@@ -141,6 +157,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
 }

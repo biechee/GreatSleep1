@@ -15,23 +15,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Greatsleep">
-        <activity android:name=".DiaryNew"></activity>
-        <activity android:name=".DiaryMenu" />
-        <activity android:name=".ClockSound" />
+
+        <activity android:name=".Diaries.DiaryNew" />
+        <activity android:name=".Clock.ClockSound" />
         <activity
-            android:name=".ClockAlarm"
+            android:name=".Clock.ClockAlarm"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.TranslucentTheme" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".LoginActivity" />
         <activity
-            android:name=".StationAlarm"
+            android:name=".Station.StationAlarm"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.TranslucentTheme" />
-        <activity android:name=".Dream" />
-        <activity android:name=".Clock" />
-        <activity android:name=".Station" />
-        <activity android:name=".Sleep" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

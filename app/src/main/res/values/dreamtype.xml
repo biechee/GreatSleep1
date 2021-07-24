@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="dream_type">
+        <item>動物</item>
+        <item>鬼神</item>
+        <item>活動</item>
+        <item>建築</item>
+        <item>其他</item>
+        <item>人物</item>
+        <item>生活</item>
+        <item>物品</item>
+        <item>孕婦</item>
+        <item>植物</item>
+        <item>自然</item>
+    </array>
+</resources>

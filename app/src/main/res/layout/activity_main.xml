@@ -5,66 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-        <Button
-            android:id="@+id/a1"
+        <FrameLayout
+            android:id="@+id/container1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="13"
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/bottom_navigation"
+            />
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="睡眠分析"
-            android:onClick="analyse_btn"
+            app:menu="@menu/bottom_navigation_main"
+            android:layout_alignParentBottom="true"
             />
-        <Button
-            android:id="@+id/a2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="到站提示"
-            android:onClick="station_btn"
-            />
-
-        <Button
-            android:id="@+id/a3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="鬧鐘"
-            android:onClick="clock_btn"
-            />
-
-        <Button
-            android:id="@+id/a4"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="夢的解析"
-            android:onClick="dream_btn"
-            />
-        <Button
-            android:id="@+id/a5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="日記"
-            android:onClick="diary_btn"
-            />
-        <Button
-            android:id="@+id/a6"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="設定"
-            android:onClick="setting_btn"
-            />
-
 
 
 </LinearLayout>
