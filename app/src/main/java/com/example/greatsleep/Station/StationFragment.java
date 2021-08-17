@@ -3,6 +3,7 @@ package com.example.greatsleep.Station;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -34,6 +36,9 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.example.greatsleep.R;
 import com.example.greatsleep.SettingActivity;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,6 +71,10 @@ public class StationFragment extends Fragment implements View.OnClickListener{
     Calendar calendar;
     private Toolbar toolbar;
     TextView information;
+    private ProgressDialog progressBar;
+    private JSONArray jsonArray;
+    private JSONObject jsonObject,stStation,edStation,station_orderByDesc,station_orderBy;
+    private String url = "https://greatsleep.000webhostapp.com/STtest.php/";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -227,24 +236,24 @@ public class StationFragment extends Fragment implements View.OnClickListener{
                 editor.putInt("time_button",R.id.time1);
                 editor.apply();
                 time1.setBackgroundResource(R.drawable.station_time_select);
-                time2.setBackgroundResource(R.drawable.station_time_btn);
-                time3.setBackgroundResource(R.drawable.station_time_btn);
+                time2.setBackgroundResource(R.drawable.circlebutton);
+                time3.setBackgroundResource(R.drawable.circlebutton);
 //                time3.setBackgroundColor(Color.parseColor("#0F0A4F"));
                 time=60;
                 break;
             case R.id.time2:
                 editor.putInt("time_button",R.id.time2);
                 editor.apply();
-                time1.setBackgroundResource(R.drawable.station_time_btn);
+                time1.setBackgroundResource(R.drawable.circlebutton);
                 time2.setBackgroundResource(R.drawable.station_time_select);
-                time3.setBackgroundResource(R.drawable.station_time_btn);
+                time3.setBackgroundResource(R.drawable.circlebutton);
                 time=120;
                 break;
             case R.id.time3:
                 editor.putInt("time_button",R.id.time3);
                 editor.apply();
-                time1.setBackgroundResource(R.drawable.station_time_btn);
-                time2.setBackgroundResource(R.drawable.station_time_btn);
+                time1.setBackgroundResource(R.drawable.circlebutton);
+                time2.setBackgroundResource(R.drawable.circlebutton);
                 time3.setBackgroundResource(R.drawable.station_time_select);
                 time=180;
                 break;
@@ -257,7 +266,6 @@ public class StationFragment extends Fragment implements View.OnClickListener{
                     Toast.makeText(getActivity(), "請先取消上次提醒再進行設定", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    new Async().execute();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     View view = getLayoutInflater().inflate(R.layout.dialog_design,null);//嵌入View
@@ -280,34 +288,7 @@ public class StationFragment extends Fragment implements View.OnClickListener{
                     d_confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            intent.addCategory(Intent.CATEGORY_DEFAULT);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            //時間設定
-                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                            int minute = calendar.get(Calendar.MINUTE);
-                            int s = calendar.get(Calendar.SECOND);
-                            calendar.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar.set(Calendar.MINUTE, minute);
-                            calendar.set(Calendar.SECOND, s+3);
-                            //計算剩餘時間
-                            int left_minute = (totalt-time) / 60;
-//                            if(totalt-time<=180){
-//                                Toast.makeText(getActivity(),  "很快就到站囉，請下次再設定", Toast.LENGTH_SHORT).show();
-//                            }
-//                            else{
-                                String left_time = "將於" + left_minute + "分鐘後提醒您";
-                                Toast.makeText(getActivity(), left_time + "", Toast.LENGTH_SHORT).show();
-
-                                long triggerAtMillis = calendar.getTimeInMillis();
-                                alarm.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentSet);
-
-                                editor.putBoolean("is_alarm", true);
-                                information.setText(startStation + " To \n" + endStation);
-                                toolbar.getMenu().findItem(R.id.action_cancel).setVisible(true);
-                                editor.putString("name", startStation + " To " + endStation);
-                                editor.apply();
-//                            }
-
+                            new Async().execute();
                             dialog.dismiss();
                         }
                     });
@@ -365,19 +346,24 @@ public class StationFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    //連線資料庫做查找動作
     class Async extends AsyncTask<Void, Void, Void> {
         String error = "";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar = new ProgressDialog(getActivity(),ProgressDialog.THEME_HOLO_DARK);
+            progressBar.setMessage("請稍後...");
+
+            progressBar.setCancelable(false);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressBar.show();
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
             int startid=0,endid=0;
             try {
-                Class.forName("com.mysql.jdbc.Driver");
-                Log.v("DB", "加載驅動成功");
-                Connection connection = DriverManager.getConnection("jdbc:mysql://192.168.0.11:3306/greatsleep?characterEncoding=utf-8",
-                        "root", "a33646509");
-                Log.v("DB", "遠端連接成功");
-                Statement statement = connection.createStatement();
                 //判斷是否有頭站，尋找頭站資料
                 if(startStation.equals("頂埔"))
                     startid=1;
@@ -392,12 +378,12 @@ public class StationFragment extends Fragment implements View.OnClickListener{
                 else if(startStation.equals("大坪林")&&linecolor.equals("Y"))
                     startid=115;
                 else{
-                    ResultSet startstation = statement.executeQuery("SELECT * FROM signature WHERE "+"("+"fsnt = "+"\'"+startStation+"\'"
-                            + " AND fsid LIKE "+"\'"+linecolor+"%"+"\'"+")");
-                    if(startstation.next()){
-                        startid=startstation.getInt(1);
+                    jsonArray = StationSQL.DB1("SELECT * FROM signature WHERE "+"("+"fsnt = "+"\'"+startStation+"\'" + " AND fsid LIKE "+"\'"+linecolor+"%"+"\'"+")",url);
+                    for(int i =0;i<jsonArray.length();i++)
+                    {
+                        stStation = jsonArray.getJSONObject(i);
+                        startid = stStation.getInt("signatureid");
                     }
-                    startstation.last();
                 }
                 //判斷是否有尾站，尋找尾站資料 大坪林要算綠線
                 if(endStation.equals("頂埔"))
@@ -413,91 +399,124 @@ public class StationFragment extends Fragment implements View.OnClickListener{
                 else if(endStation.equals("大坪林")&&linecolor.equals("Y"))
                     endid=115;
                 else{
-                    ResultSet endstation = statement.executeQuery("SELECT * FROM signature WHERE"+"("+"fsnt ="+"\'"+endStation+"\'"
-                            + " AND fsid LIKE "+"\'"+linecolor+"%"+"\'"+")");
-                    if(endstation.next()){
-                        endid=endstation.getInt(1)+1;
+                    jsonArray = StationSQL.DB1("SELECT * FROM signature WHERE"+"("+"fsnt ="+"\'"+endStation+"\'" + " AND fsid LIKE "+"\'"+linecolor+"%"+"\'"+")",url);
+                    for(int i=0;i<jsonArray.length();i++)
+                    {
+                        edStation = jsonArray.getJSONObject(i);
+                        endid = edStation.getInt("signatureid")+1;
                     }
-                    endstation.last();
                 }
                 //順  while迴圈 if判斷是否加到目標站
                 if((startid-endid)>=0){
                     //順的資料" 9stopt=0,8rout=0,totalt=0
-                    ResultSet station_orderbydesc = statement.executeQuery("SELECT * FROM signature WHERE "+"("
+                    jsonArray = StationSQL.DB1("SELECT * FROM signature WHERE "+"("
                             +endid+" <= signatureid AND signatureid <= "+startid+")"
-                            +"ORDER BY signatureid DESC");
-                    while(station_orderbydesc.next()){
-                        //到站
-                        if(station_orderbydesc.getInt(1)==endid){
-                            runt=runt+station_orderbydesc.getInt(8);
+                            +"ORDER BY signatureid DESC",url);
+                    for(int i =0;i<jsonArray.length();i++)
+                    {
+                        station_orderByDesc = jsonArray.getJSONObject(i);
+                        if(station_orderByDesc.getInt("signatureid")==endid)
+                        {
+                            runt = runt+station_orderByDesc.getInt("runt");
                             break;
                         }
-                        runt=runt+station_orderbydesc.getInt(8);
-                        stopt=stopt+station_orderbydesc.getInt(9);
+                        runt = runt+station_orderByDesc.getInt("runt");
+                        stopt = stopt+station_orderByDesc.getInt("stopt");
                     }
                     totalt=runt+stopt;
-                    station_orderbydesc.last();
-
                 }
                 //逆 for迴圈 外 內
                 else {
                     //逆的資料
-                    ResultSet station_orderby = statement.executeQuery("SELECT * FROM signature WHERE "+"("
+                    jsonArray = StationSQL.DB1("SELECT * FROM signature WHERE "+"("
                             +endid+" >= signatureid and signatureid >= "+startid+")"
-                            +"ORDER BY signatureid");
+                            +"ORDER BY signatureid",url);
+
                     //尾站一站
                     if(startid==endid-1){
-                        station_orderby.next();
-                        runt=runt+station_orderby.getInt(8);
+                        station_orderBy= jsonArray.getJSONObject(0);//可能有錯
+                        runt=runt+station_orderBy.getInt("runt");
                     }
                     else{
                         //查詢含尾站
                         if(startStation.equals("頂埔")||startStation.equals("動物園")||startStation.equals("新店")||
                                 startStation.equals("南勢角")||startStation.equals("象山")||(startStation.equals("大坪林")&&linecolor.equals("Y"))){
-                            station_orderby.next();
-                            runt=station_orderby.getInt(8);
+                            station_orderBy= jsonArray.getJSONObject(0);
+                            runt=station_orderBy.getInt("runt");
                             startid=startid+1;
-                            station_orderby.absolute(1);
-                            while(station_orderby.next()){
-                                if(startid==endid-1){
-                                    runt=runt+station_orderby.getInt(8);
-                                    stopt=stopt+station_orderby.getInt(9);
+                            for(int i =1;i<jsonArray.length();i++)
+                            {
+                                station_orderBy= jsonArray.getJSONObject(i);
+                                if(startid==endid-1)
+                                {
+                                    runt = runt+station_orderBy.getInt("runt");
+                                    stopt=stopt+station_orderBy.getInt("stopt");
                                     break;
                                 }
-                                //到站
-                                runt=runt+station_orderby.getInt(8);
-                                stopt=stopt+station_orderby.getInt(9);
+                                runt = runt+station_orderBy.getInt("runt");
+                                stopt=stopt+station_orderBy.getInt("stopt");
                                 startid++;
                             }
                         }
                         //查詢不含尾站
                         else{
-                            station_orderby.absolute(1);
-                            station_orderby.next();
-                            runt=station_orderby.getInt(8);
-                            station_orderby.absolute(2);
+                            station_orderBy= jsonArray.getJSONObject(1);
+                            runt = station_orderBy.getInt("runt");
                             startid=startid+1;
-                            while(station_orderby.next()){
+                            for(int i =2;i<jsonArray.length();i++)
+                            {
+                                station_orderBy= jsonArray.getJSONObject(i);
                                 if(startid==endid-1){
                                     break;
                                 }
-                                runt=runt+station_orderby.getInt(8);
-                                stopt=stopt+station_orderby.getInt(9);
+                                runt = runt+station_orderBy.getInt("runt");
+                                stopt=stopt+station_orderBy.getInt("stopt");
                                 startid++;
                             }
                         }
                     }
                     totalt=runt+stopt;
-                    station_orderby.last();
                 }
-                Log.v("Second", "總秒數: "+totalt);
+                Log.v("Second", "總秒數: "+totalt+"Runt"+runt+"Stopt"+stopt);
             } catch (Exception e) {
                 error = e.toString();
-                Log.e("DB", "加載驅動失敗");
-                Log.e("DB", "遠端連接失敗");
-                Log.e("DB", e.toString());
+            }
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //時間設定
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int s = calendar.get(Calendar.SECOND);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, s+3);
+            //計算剩餘時間
+            if(totalt-time<=180){
+                return null;
+            }
+            else {
+                long triggerAtMillis = calendar.getTimeInMillis();
+                alarm.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentSet);
+                editor.putBoolean("is_alarm", true);
+                editor.putString("name", startStation + " To " + endStation);
+                editor.apply();
             }
             return null;
+        }
+        @Override
+        protected void onPostExecute(Void unused) {
+//            if(totalt-time<=180){
+//                Toast.makeText(getActivity(),  "很快就到站囉，請下次再設定", Toast.LENGTH_SHORT).show();
+//            }
+//            else{
+                int left_minute = (totalt-time) / 60;
+                String left_time = "將於" + left_minute + "分鐘後提醒您";
+                Toast.makeText(getActivity(), left_time + "", Toast.LENGTH_SHORT).show();
+                information.setText(startStation + " To \n" + endStation);
+                toolbar.getMenu().findItem(R.id.action_cancel).setVisible(true);
+//            }
+            progressBar.dismiss();
+            super.onPostExecute(unused);
         }
     }
 
@@ -523,7 +542,5 @@ public class StationFragment extends Fragment implements View.OnClickListener{
         }
         return d;
     }
-
-
 
 }

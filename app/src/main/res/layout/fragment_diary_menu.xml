@@ -10,22 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_diary"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/color1"
+            android:background="#172851"
             android:elevation="4dp"
-            app:title="日記"
             android:theme="@style/AppTheme.ToolBarStyle"
-            >
-        </androidx.appcompat.widget.Toolbar>
+            app:title="日記"></androidx.appcompat.widget.Toolbar>
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="342dp"
+                android:layout_height="355dp"
+                android:layout_gravity="center"
+                android:src="@drawable/education" />
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/diary_list"
             android:layout_width="match_parent"

@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#98ACD4"
     android:orientation="vertical"
     tools:context=".Diaries.DiaryNew">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/date"
             android:layout_width="match_parent"
@@ -18,16 +21,16 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textSize="16dp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/diary_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="請輸入標題"
             android:paddingLeft="20dp"
+            android:singleLine="true"
             android:visibility="visible"></EditText>
     </LinearLayout>
 
@@ -36,9 +39,11 @@
         android:layout_height="0dp"
         android:layout_weight="9"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <Button
                 android:id="@+id/save_button"
                 android:layout_width="wrap_content"
@@ -46,25 +51,25 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="30dp"
+                android:background="@drawable/searchbutton"
                 android:gravity="center"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
                 android:text="儲存日記"
-                android:background="@drawable/searchbutton"
-                android:textStyle="bold"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp"
+                android:textStyle="bold"></Button>
+
             <EditText
                 android:id="@+id/diary_edit"
                 android:layout_width="match_parent"
                 android:layout_height="653dp"
                 android:layout_above="@+id/save_button"
                 android:gravity="top"
-                android:paddingTop="30dp"
-                android:paddingLeft="20dp"
+                android:hint="請輸入您的日記內容"
                 android:inputType="textMultiLine"
-                android:singleLine="false"
-                android:typeface="normal"
-                android:hint="請輸入您的日記內容"></EditText>
+                android:paddingLeft="20dp"
+                android:paddingTop="30dp"
+                android:typeface="normal"></EditText>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

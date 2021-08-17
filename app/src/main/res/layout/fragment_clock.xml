@@ -4,75 +4,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#98ACD4"
     android:orientation="vertical"
     tools:context=".Clock.ClockFragment">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_clock"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/color1"
+        android:background="#172851"
         android:elevation="4dp"
-        app:title="鬧鐘"
         android:theme="@style/AppTheme.ToolBarStyle"
-        >
+        app:title="鬧鐘">
+
         <TextView
             android:id="@+id/clock_information"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:textColor="@color/white"
             android:layout_gravity="center"
-            />
+            android:textColor="@color/white"
+            android:textSize="12dp" />
     </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <TimePicker
             android:id="@+id/timerpick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/searchbutton"
-            android:timePickerMode="spinner"
-            />
+            android:background="@drawable/blackgrayboard"
+            android:timePickerMode="spinner" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/white"/>
+            android:background="@color/white" />
 
         <Switch
             android:id="@+id/switch1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="是否震動"
-            android:paddingTop="20dp"
             android:paddingLeft="20dp"
-            android:textSize="20dp" />
+            android:paddingTop="10dp"
+            android:text="是否震動"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/white"/>
+            android:layout_marginTop="10dp"
+            android:background="@color/white" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:paddingLeft="20dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:text="鬧鐘音量"
                 android:textColor="@color/white"
-                android:text="鬧鐘音量"/>
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
             <SeekBar
                 android:id="@+id/volume_setting"
                 android:layout_width="match_parent"
@@ -81,41 +90,61 @@
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
                 android:progressDrawable="@drawable/seek_bar_voice_bg"
-                android:thumb="@drawable/seek_bar_voice_circle"
-                />
-
+                android:thumb="@drawable/seek_bar_voice_circle" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/white"/>
+            android:layout_marginTop="10dp"
+            android:background="@color/white" />
+
         <Button
             android:id="@+id/soundSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:layout_marginTop="20dp"
-            android:textSize="20sp"
-            />
+            android:layout_marginTop="10dp"
+            android:background="#172851"
+            android:gravity="left|center"
+            android:paddingLeft="20dp"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white" />
+
+        <Button
+            android:id="@+id/gameset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#172851"
+            android:gravity="left|center"
+            android:paddingLeft="20dp"
+            android:textSize="20sp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <Button
                 android:id="@+id/clock_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="確認"
-                android:textSize="18sp"
-                android:background="@drawable/searchbutton"
                 android:layout_alignParentBottom="true"
                 android:layout_marginHorizontal="20dp"
-                />
+                android:background="@drawable/searchbutton"
+                android:text="確認"
+                android:textSize="18sp" />
         </RelativeLayout>
 
     </LinearLayout>

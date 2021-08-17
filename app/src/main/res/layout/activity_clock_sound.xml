@@ -4,45 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#98ACD4"
     android:orientation="vertical"
     tools:context=".Clock.ClockSound">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#172851">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:gravity="center|left"
+        android:layout_marginLeft="20dp"
         android:text="鈴聲設定"
+        android:textColor="@color/white"
         android:textSize="24sp"
-        />
-
+        android:textStyle="bold" />
+</LinearLayout>
     <RadioGroup
         android:id="@+id/mRadioGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
+
         <RadioButton
             android:id="@+id/mRadioButton0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/com_facebook_button_login_background"
             android:text="鈴聲1"
-            />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/mRadioButton1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="鈴聲2"/>
+            android:layout_marginTop="20dp"
+            android:background="@drawable/com_facebook_button_login_background"
+            android:text="鈴聲2"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/mRadioButton2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="鈴聲3"/>
+            android:layout_marginTop="20dp"
+            android:background="@drawable/com_facebook_button_login_background"
+            android:text="鈴聲3"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
 
     </RadioGroup>
 
+    <Button
+        android:id="@+id/button16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/searchbutton"
+        android:onClick="setdone"
+        android:text="確定"
+        android:textSize="20sp" />
 
 
 </LinearLayout>

@@ -4,11 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.greatsleep.R;
+
+import static android.media.AudioManager.FLAG_PLAY_SOUND;
 
 public class ClockSound extends AppCompatActivity {
     private RadioGroup mRadioGroup;
@@ -21,6 +25,7 @@ public class ClockSound extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("clock", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
+        AudioManager am=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         mRadioButton0 = (RadioButton) findViewById(R.id.mRadioButton0);
         mRadioButton1 = (RadioButton) findViewById(R.id.mRadioButton1);
@@ -31,6 +36,7 @@ public class ClockSound extends AppCompatActivity {
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                am.setStreamVolume(AudioManager.STREAM_MUSIC,5,0);
                 switch (checkedId){
                     case R.id.mRadioButton0:
                         editor.putInt("tune", R.raw.sound1);
@@ -56,9 +62,10 @@ public class ClockSound extends AppCompatActivity {
                 sound.playTune();
             }
         });
-
     }
-
+    public void setdone(View view) {
+        ClockSound.this.finish();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

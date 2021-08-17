@@ -1,5 +1,6 @@
 package com.example.greatsleep.Dreams;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.os.StrictMode;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +31,19 @@ import android.os.AsyncTask;
 import com.example.greatsleep.R;
 import com.example.greatsleep.SettingActivity;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DreamFragment extends Fragment {
     private View mainView;
@@ -46,9 +58,29 @@ public class DreamFragment extends Fragment {
     private Spinner spinner;
     private String type;
     private String name;
+    private String r="";
+    private String url="https://greatsleep.000webhostapp.com/dreamdata.php/";
+    private ProgressBar mLoadingBar;
+    private JSONArray jsonArray;
+    JSONObject jsonObject;
+    private Integer j;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        StrictMode.setThreadPolicy
+                (new StrictMode.ThreadPolicy.Builder()
+                        .detectDiskReads()
+                        .detectDiskWrites()
+                        .detectNetwork()
+                        .penaltyLog()
+                        .build()
+                );
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .build()
+        );
         mainView=inflater.inflate(R.layout.fragment_dream, container, false);
 
         toolbar=mainView.findViewById(R.id.toolbar_dream);
@@ -64,7 +96,9 @@ public class DreamFragment extends Fragment {
                 return false;
             }
         });
-
+//        mLoadingBar=(ProgressBar)mLoadingBar.findViewById(R.id.progress_bar);
+//        mLoadingBar.setVisibility(View.VISIBLE);
+//        mLoadingBar.setVisibility(View.GONE);
         btnshow = (Button) mainView.findViewById(R.id.search);
         textView = (TextView) mainView.findViewById(R.id.textView);
         editText = (EditText)  mainView.findViewById(R.id.editText);
@@ -140,52 +174,63 @@ public class DreamFragment extends Fragment {
                 }
                 else if(str.equals("") && !(category.equals("")))
                 {
-                    sql ="SELECT * FROM " + category ;
+                    jsonArray = DBString.DB1("select * from "+category,url);
                     Toast.makeText(getActivity(),"系統將顯示 『"+type+"』 選項的所有內容\n"+"(周公解夢官網提供)", Toast.LENGTH_SHORT).show();
                     new Task().execute();
                 }
                 else
                 {
-                    sql ="SELECT * FROM " + category +" WHERE name LIKE "+"\'"+"%"+str+"%"  +  "\'";
+                    jsonArray = DBString.DB1("select * from "+category+" WHERE name LIKE "+"\'"+"%"+str+"%"  +  "\'",url);
                     new Task().execute();
-                    Toast.makeText(getActivity(),"周公解夢官網提供", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"以上為所有包含『"+str+"』的搜尋內容", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         // Inflate the layout for this fragment
-     return mainView;
+        return mainView;
     }
     @Override
     public void onResume() {
         super.onResume();
         Toast.makeText(getActivity(),"不輸入搜尋內容可搜尋該類別所有內容！", Toast.LENGTH_SHORT).show();
-    }
+    }//不需要動
     class Task extends AsyncTask<Void, Void, Void> {
-        String records = "",error = "";
+        String records = "",error = "",result="";
         @Override
         protected Void doInBackground(Void... voids) {
-            i=0;
+            j=0;
             try{
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection connection = DriverManager.getConnection
-                        ("jdbc:mysql://192.168.20.10:3306/imDB?characterEncoding=utf-8"
-                                ,"andro","andro"
-                        );
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql);
-                if(!resultSet.next())
+                for(int i =0;i<jsonArray.length();i++)
                 {
-                    records+="在『"+type+"』裡沒有符合『"+str+"』的搜尋內容";
-                }
-                else
-                {
-                    while (resultSet.next()){
-                        i++;
-                        records+= "\n\n(包含"+str+"的搜尋結果) \n"+i+"、 "+resultSet.getString(2) + "\n\n" + resultSet.getString(3)
-                                .replaceAll("。","。\n").replaceAll("？","?\n")
+                    j++;
+                    jsonObject = jsonArray.getJSONObject(i);
+                    if (str.equals(""))
+                    {
+                        records += "\n\n"+j+"、 "+jsonObject.getString("name")+"\n"+jsonObject.getString("content")
+                                .replaceAll("\n","\n\n")
+                                .replaceAll("。","。\n\n").replaceAll("？","?\n\n")
                                 .replaceAll("，請看下面由","。\n")
-                                .replaceAll("小編幫你整理的夢見"+resultSet.getString(2)+"的詳細解說吧。","")
-                                .replaceAll("\\("+"周公解夢官網"+"\\)","");
+                                .replaceAll("小編幫你整理的夢見"+jsonObject.getString("name")+"的詳細解說吧。","")
+                                .replaceAll("\\("+"周公解夢官網"+"\\)","")
+                                .replaceAll("\\("+"由周公解夢","").replaceAll("/提供\\)","")
+                                .replaceAll("\\("+"來自","")
+                                .replaceAll("）","")
+                                .replaceAll("此夢過後。","")
+                                .replaceAll("夢見"+jsonObject.getString("name")+"的案例分析","\n"+"夢見"+jsonObject.getString("name")+"的案例分析："+"\n\n");
+                    }
+                    else
+                    {
+                        records += "\n\n(包含"+str+"的搜尋結果) \n"+j+"、 "+jsonObject.getString("name")+"\n"+jsonObject.getString("content")
+                                .replaceAll("\n","\n\n")
+                                .replaceAll("。","。\n\n").replaceAll("？","?\n\n")
+                                .replaceAll("，請看下面由","。\n")
+                                .replaceAll("小編幫你整理的夢見"+jsonObject.getString("name")+"的詳細解說吧。","")
+                                .replaceAll("\\("+"周公解夢官網"+"\\)","")
+                                .replaceAll("\\("+"由周公解夢","").replaceAll("/提供","")
+                                .replaceAll("\\("+"來自","")
+                                .replaceAll("\\)","")
+                                .replaceAll("此夢過後。","")
+                                .replaceAll("夢見"+jsonObject.getString("name")+"的案例分析","\n"+"夢見"+jsonObject.getString("name")+"的案例分析："+"\n\n");
                     }
                 }
             }

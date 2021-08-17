@@ -32,7 +32,9 @@ import android.widget.Toast;
 
 import com.example.greatsleep.R;
 import com.example.greatsleep.SettingActivity;
+import com.unity3d.player.UnityPlayerActivity;
 
+import java.net.URISyntaxException;
 import java.util.Calendar;
 
 import static android.media.AudioManager.FLAG_PLAY_SOUND;
@@ -42,6 +44,7 @@ public class ClockFragment extends Fragment {
     int minutes=0;
     Switch vibrate;
     Button sound;
+    Button game;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     PendingIntent pendingIntentSet;
@@ -68,6 +71,7 @@ public class ClockFragment extends Fragment {
         setHasOptionsMenu(true);
         vibrate=(Switch)mainView.findViewById(R.id.switch1);
         sound=(Button)mainView.findViewById(R.id.soundSet);
+        game=(Button)mainView.findViewById(R.id.gameset);
         timePicker=(TimePicker)mainView.findViewById(R.id.timerpick);
         toolbar=mainView.findViewById(R.id.toolbar_clock);
         toolbar.inflateMenu(R.menu.menu_example);
@@ -76,8 +80,7 @@ public class ClockFragment extends Fragment {
         preferences =getActivity().getSharedPreferences("clock", Context.MODE_PRIVATE);
         editor = preferences.edit();
 
-        intent = new Intent(getActivity(), ClockAlarm.class);
-        pendingIntentSet=PendingIntent.getActivity(getActivity().getApplicationContext(),1,intent,0);
+
         alarm=(AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
 
         AudioManager am=(AudioManager)getActivity().getSystemService(Context.AUDIO_SERVICE);
@@ -92,14 +95,13 @@ public class ClockFragment extends Fragment {
                     seekBar.setProgress(3);
                     progress=3;
                 }
-
-                am.setStreamVolume(AudioManager.STREAM_MUSIC,preferences.getInt("volume",3),FLAG_PLAY_SOUND);
+                am.setStreamVolume(AudioManager.STREAM_MUSIC,preferences.getInt("volume",3),0);
                 editor.putInt("volume",progress);
                 editor.apply();
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                mediaPlayer=MediaPlayer.create(getActivity(),preferences.getInt("tune",0));
+                mediaPlayer=MediaPlayer.create(getActivity(),preferences.getInt("tune",R.raw.sound1));
                 mediaPlayer.setLooping(true);
                 mediaPlayer.start();
             }
@@ -129,7 +131,7 @@ public class ClockFragment extends Fragment {
                         TextView dialog_message=view.findViewById(R.id.alarm_dialog_message);
                         ab.setView(view);
                         AlertDialog dialog=ab.create();
-                        dialog_message.setText("鬧鐘時間還沒到，確定取消嗎?");
+                        dialog_message.setText("確定取消鬧鐘嗎?");
                         d_confirm.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -169,55 +171,100 @@ public class ClockFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        game.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),GameSet.class);
+                startActivity(intent);
+            }
+        });
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //設定響鈴時可以在主頁進行
-                intent.addCategory (Intent.CATEGORY_DEFAULT );
-                intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK );
-                //時間設定
-                calendar =Calendar.getInstance();
-                calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    hour=timePicker.getHour();
-                    minutes=timePicker.getMinute();
+                if(preferences.getBoolean("is_alarm",false)){
+                    Toast.makeText(getActivity(),"鬧鐘尚未取消，請先取消再做設定",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    hour=timePicker.getCurrentHour();
-                    minutes=timePicker.getCurrentMinute();
-                }
+                    //設定響鈴時可以在主頁進行
+                    intent.addCategory (Intent.CATEGORY_DEFAULT );
+                    intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK );
+                    //時間設定
+                    calendar =Calendar.getInstance();
+                    calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        hour=timePicker.getHour();
+                        minutes=timePicker.getMinute();
+                    }
+                    else{
+                        hour=timePicker.getCurrentHour();
+                        minutes=timePicker.getCurrentMinute();
+                    }
 
-                if (calendar.get(Calendar.HOUR_OF_DAY)>hour){//如果選擇的時間小於獲取的系統時間日期
-                    calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
-                }
-                else if (calendar.get(Calendar.HOUR_OF_DAY)==hour){
-                    if (calendar.get(Calendar.MINUTE)>=minutes) {
+                    if (calendar.get(Calendar.HOUR_OF_DAY)>hour){//如果選擇的時間小於獲取的系統時間日期
                         calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
                     }
+                    else if (calendar.get(Calendar.HOUR_OF_DAY)==hour){
+                        if (calendar.get(Calendar.MINUTE)>=minutes) {
+                            calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
+                        }
+                    }
+                    calendar.set(Calendar.HOUR_OF_DAY,hour);
+                    calendar.set(Calendar.MINUTE,minutes);
+                    calendar.set(Calendar.SECOND,0);
+
+                    currentDate=calendar.get(Calendar.DATE);
+                    currentHour=calendar.get(Calendar.HOUR_OF_DAY);
+                    currentMinute=calendar.get(Calendar.MINUTE);
+
+                    long triggerAtMillis= calendar.getTimeInMillis();
+                    information.setText("您選擇的時間:"+currentDate+"日"+currentHour+"時"+currentMinute+"分");
+                    alarm.set(AlarmManager.RTC_WAKEUP,triggerAtMillis,pendingIntentSet);
+
+                    toolbar.getMenu().findItem(R.id.action_cancel).setVisible(true);
+                    editor.putBoolean("is_alarm",true);
+                    editor.putString("name",currentDate+"日"+currentHour+"時"+currentMinute+"分");
+                    editor.putBoolean("activityforalarm",true);
+                    editor.apply();
+                    Toast.makeText(getActivity(),"您選擇的時間："+currentDate+"日"+currentHour+"時"+currentMinute+"分",Toast.LENGTH_SHORT).show();
                 }
-                calendar.set(Calendar.HOUR_OF_DAY,hour);
-                calendar.set(Calendar.MINUTE,minutes);
-                calendar.set(Calendar.SECOND,0);
-
-                currentDate=calendar.get(Calendar.DATE);
-                currentHour=calendar.get(Calendar.HOUR_OF_DAY);
-                currentMinute=calendar.get(Calendar.MINUTE);
-
-                long triggerAtMillis= calendar.getTimeInMillis();
-                information.setText("您選擇的時間:"+currentDate+"日"+currentHour+"時"+currentMinute+"分");
-                alarm.set(AlarmManager.RTC_WAKEUP,triggerAtMillis,pendingIntentSet);
-                toolbar.getMenu().findItem(R.id.action_cancel).setVisible(true);
-                editor.putBoolean("is_alarm",true);
-                editor.putString("name",currentDate+"日"+currentHour+"時"+currentMinute+"分");
-                editor.apply();
-                Toast.makeText(getActivity(),"您選擇的時間："+currentDate+"日"+currentHour+"時"+currentMinute+"分",Toast.LENGTH_SHORT).show();
-            }
+                }
         });
         return mainView;
     }
     @Override
     public void onResume() {
         super.onResume();
+        String gameActivity=preferences.getString("gameactivity","UnityPlayerActivity.class");
+
+        switch (gameActivity){
+            case "UnityPlayerActivity.class":
+                intent = new Intent(getActivity(), UnityPlayerActivity.class);
+                break;
+            case "ClockGame2.class":
+                intent = new Intent(getActivity(), ClockGame2.class);
+                break;
+            case "ClockGame3.class":
+                intent = new Intent(getActivity(), ClockGame3.class);
+                break;
+            case "ClockAlarm.class":
+                intent = new Intent(getActivity(), ClockAlarm.class);
+                break;
+        }
+        pendingIntentSet=PendingIntent.getActivity(getActivity().getApplicationContext(),1,intent,0);
+
+        Calendar calendar1=Calendar.getInstance();
+        if(preferences.getBoolean("is_alarm",false)){
+            if(calendar1.get(Calendar.MINUTE)>=currentMinute){
+                if(calendar1.get(Calendar.HOUR_OF_DAY)>=currentHour){
+                    if(calendar1.get(Calendar.DATE)>=currentDate){
+                        editor.putBoolean("is_alarm",false);
+                        editor.putString("name","您選擇的時間：無");
+                        editor.apply();
+                    }
+                }
+            }
+        }
+
         information.setText(preferences.getString("name","您選擇的時間：無"));
         if(preferences.getBoolean("is_alarm",false)){
             toolbar.getMenu().findItem(R.id.action_cancel).setVisible(true);
@@ -235,6 +282,7 @@ public class ClockFragment extends Fragment {
             }
         });
         //更改按鈕文字
-        sound.setText("鈴聲   "+preferences.getString("text","鈴聲一"));
+        sound.setText("鬧鐘鈴聲   "+preferences.getString("text","鈴聲一"));
+        game.setText("鬧鐘遊戲   "+preferences.getString("gametext","遊戲一"));
     }
 }

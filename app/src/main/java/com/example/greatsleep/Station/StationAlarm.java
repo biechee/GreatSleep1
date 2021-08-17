@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.KeyEvent;
@@ -16,12 +17,21 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.greatsleep.Clock.ClockAlarm;
 import com.example.greatsleep.R;
+import com.example.greatsleep.SettingActivity;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static android.media.AudioManager.FLAG_PLAY_SOUND;
 
 public class StationAlarm extends AppCompatActivity {
     Vibrator v;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
+    SettingActivity settingActivity=new SettingActivity();
+    Timer timer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +76,15 @@ public class StationAlarm extends AppCompatActivity {
             }
         });
         dialog.show();
+
+        timer = new Timer();
+        timer.schedule(new Tasks(), 0, 2000);
+    }
+    private class Tasks extends TimerTask {
+        @Override
+        public void run() {
+            settingActivity.vibrate(2);
+        }
     }
     @Override
     protected void onStop() {
@@ -74,6 +93,11 @@ public class StationAlarm extends AppCompatActivity {
         editor.putBoolean("is_alarm",false);
         editor.putString("name",null);
         editor.apply();
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
     }
 
     @Override

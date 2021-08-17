@@ -3,7 +3,9 @@ package com.example.greatsleep;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -44,13 +46,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     //Google
     GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
@@ -66,7 +74,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+        editor = preferences.edit();
         //FB  KEY:WCduEgfoGEaqC76pOI+oviOlT/U=
         //FB
         callbackManager = CallbackManager.Factory.create();
@@ -135,8 +144,35 @@ public class LoginActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Log.v("a","sign with credential Facebook successful");
                             FirebaseUser user=mAuthFB.getCurrentUser();
+                            String uid=user.getUid();
+                            String email=user.getEmail();
+                            Log.d("ss", "success on uid"+uid);
+                            Log.d("ss", "success on email"+email);
                             FBloginButton.setEnabled(true);
                             updateUI();
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("UID",uid);
+                            data.put("Email", email);
+                            //抓取Email(檔案名稱)供使用者存取資料
+                            editor.putString("userdocument",email);
+                            editor.apply();
+//                      Add a new document with a generated ID
+
+                            db.collection("User").document(email).collection("sleepdata").document("userdata")
+                                    .set(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("ss", "Google Document successfully written!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("ss", "Google Error writing document", e);
+                                        }
+                                    });
                         }
                         else{
                             Log.v("a","sign with credential Facebook Fail");
@@ -144,8 +180,8 @@ public class LoginActivity extends AppCompatActivity {
                             FBloginButton.setEnabled(true);
                             updateUI();
                         }
-            }
-        });
+                    }
+                });
     }
 
     private void updateUI() {
@@ -197,6 +233,30 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
                         finish();
+
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("UID",uid);
+                        data.put("Email", email);
+                        editor.putString("userdocument",email);
+                        editor.apply();
+                        db.collection("User").document(email).collection("userinfo").document("userdata")
+                                .set(data, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("ss", "Document successfully written!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("ss", "Error writing document", e);
+                                    }
+                                });
+
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

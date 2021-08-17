@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="color1">#05268A</color>
     <color name="transparent">#3000</color>
+    <color name="graysearch">#DFE6ED</color>
 </resources>
