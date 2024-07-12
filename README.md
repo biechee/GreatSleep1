@@ -1,4 +1,7 @@
 # 大學專題
+## 使用技術
+
+![image](https://github.com/user-attachments/assets/e08a781f-dc07-4b9d-a74f-ca5a2be00d1e)
 
 ## 主要有五大功能
 
